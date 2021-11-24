@@ -1,0 +1,763 @@
+create database DB_Clinica_CSelman_2018325_IN4BM;
+USE DB_Clinica_CSelman_2018325_IN4BM;
+#=======================================================================================================================================#
+-- -------------------------------------------------PROCEDIMIENTOS DE CREACION DE TABLAS --------------------------------------------- --
+#=======================================================================================================================================#
+-- 1) Tabla Tipo_Genero
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Genero()
+begin 
+	create table Genero(Codigo_Tipo_Genero int primary key auto_increment,
+	Nombre varchar(20));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Genero();
+-- 2) Tabla Paciente
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Paciente()
+begin 
+	create table Paciente(Codigo_Paciente int primary key auto_increment,
+	Nombre varchar(20),
+    Apellido varchar(20),
+    Correo varchar(20),
+    Fecha_Nacimiento date,
+    Genero int,
+    foreign key (Genero) references Genero(Codigo_Tipo_Genero));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Paciente();
+-- 3) Tabla Tipo_Medicina
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Tipo_Medicina()
+begin 
+	create table Tipo_Medicina(Codigo_Tipo_Medicina int primary key auto_increment,
+	Nombre varchar(20),
+    Descripcion varchar(30));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Tipo_Medicina();
+-- 4) Tabla Medicina
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Medicina()
+begin 
+	create table Medicina(Codigo_Medicina int primary key auto_increment,
+	Nombre varchar(20),
+    Tipo_Medicina int,
+    foreign key (Tipo_Medicina) references Tipo_Medicina(Codigo_Tipo_Medicina));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Medicina();
+-- 5) Tabla Tipo_Especialidad
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Tipo_Especialidad()
+begin 
+	create table Tipo_Especialidad(Codigo_Tipo_Especialidad int primary key auto_increment,
+	Nombre varchar(50));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Tipo_Especialidad();
+-- 6) Tabla Doctor
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Doctor()
+begin 
+	create table Doctor(Codigo_Doctor int primary key auto_increment,
+	Num_Licencia int,
+    Nombre Varchar(20),
+	Apellido Varchar(20),
+    Codigo_Tipo_Especialidad int,
+    Fecha Date,
+    foreign key (Codigo_Tipo_Especialidad) references Tipo_Especialidad(Codigo_Tipo_Especialidad));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Doctor();
+-- 7) Tabla Receta
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Receta()
+begin 
+	create table Receta(Codigo_Receta int primary key auto_increment,
+	Codigo_Paciente int,
+    Codigo_Medicina int,
+    Codigo_Doctor int,
+    Cantidad int,
+    Docis Varchar(50),
+    Fecha Date,
+    foreign key (Codigo_Paciente) references Paciente(Codigo_Paciente),
+    foreign key (Codigo_Medicina) references Medicina(Codigo_Medicina),
+    foreign key (Codigo_Doctor) references Doctor(Codigo_Doctor));
+end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Receta();
+-- 8) Tabla Cita
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Cita()
+begin 
+	create table Cita(Codigo_Cita int primary key auto_increment,
+	Fecha Date,
+    Codigo_Doctor int,
+    foreign key (Codigo_Doctor) references Doctor(Codigo_Doctor));
+    end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Cita();
+-- 9) Tabla Registro
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Registro()
+begin 
+	create table Registro(Codigo_Registro int primary key auto_increment,
+    Codigo_Paciente int,
+    Codigo_Cita int,
+    foreign key (Codigo_Paciente) references Paciente(Codigo_Paciente),
+    foreign key (Codigo_Cita) references Cita(Codigo_Cita));
+    end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Registro();
+-- 10) Tabla Tratamiento
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Tratamiento()
+begin 
+	create table Tratamiento(Codigo_Tratamiento int primary key auto_increment,
+    Nombre varchar(20));
+    end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Tratamiento();
+-- 11) Tabla Visitas
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Visitas()
+begin 
+	create table Visitas(Codigo_Visitas int primary key auto_increment,
+    Codigo_Paciente int,
+    Condicion varchar(50),
+    Hora Time,
+    foreign key (Codigo_Paciente) references Paciente(Codigo_Paciente));
+    end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Visitas();
+-- 12) Tabla Bitacora
+delimiter $$
+create procedure Procedimiento_Crear_Tabla_Bitacora()
+begin 
+	create table Bitacora(Codigo_Bitacora int primary key auto_increment,
+    Codigo_Visitas int,
+    Codigo_Receta int,
+    foreign key (Codigo_Visitas) references Visitas(Codigo_Visitas),
+    foreign key (Codigo_Receta) references Receta(Codigo_Receta));
+    end $$
+delimiter ;
+call Procedimiento_Crear_Tabla_Bitacora();
+#=======================================================================================================================================#
+-- ------------------------------------------PROCEDIMIENTOS DE INSERTAR DATOS EN LAS TABLAS ------------------------------------------ --
+#=======================================================================================================================================#
+-- 1) Tabla Tipo_Genero
+delimiter $$
+create procedure Ingresar_Genero(in GN VARCHAR(30))
+begin 
+ insert into Genero(Nombre) values (GN);
+end $$
+delimiter ;
+call Ingresar_Genero("Masculino");
+call Ingresar_Genero("Femenino");
+-- 2) Tabla Paciente
+delimiter $$
+create procedure Ingresar_Paciente(in PN VARCHAR(20),IN PA VARCHAR(20),IN PC VARCHAR(20),IN PFN DATE,IN PG INT)
+begin 
+ insert into Paciente(Nombre,Apellido,Correo,Fecha_Nacimiento,Genero) values (PN,PA,PC,PFN,PG);
+end $$
+delimiter ;
+call Ingresar_Paciente("Carlos","Selman","CaSe@gmail.com","2002-12-28","1");
+call Ingresar_Paciente("Joaquin","Zaragoza","JoZa@gmail.com","2002-11-15","1");
+call Ingresar_Paciente("Mario","Rosales","MaRo@gmail.com","2002-10-2","1");
+call Ingresar_Paciente("Maria","Quijano","MaQu@gmail.com","2001-5-2","2");
+call Ingresar_Paciente("Paola","Jordan","PaJo@gmail.com","2001-8-3","2");
+-- 3) Tabla Tipo_Medicina
+delimiter $$
+create procedure Ingresar_Tipo_Medicina(in TN VARCHAR(20),IN TD VARCHAR(30))
+begin 
+ insert into Tipo_Medicina(Nombre,Descripcion) values (TN,TD);
+end $$
+delimiter ;
+call Ingresar_Tipo_Medicina("Vitaflenaco","Tabletas");
+call Ingresar_Tipo_Medicina("Calmante","Jarabe");
+call Ingresar_Tipo_Medicina("Vitamina","Tabletas");
+call Ingresar_Tipo_Medicina("Anestecia","Liquido");
+call Ingresar_Tipo_Medicina("Lubricante","Liquido");
+-- 4) Tabla Medicina
+delimiter $$
+create procedure Ingresar_Medicina(in MN VARCHAR(20),IN MTM INT)
+begin 
+ insert into Medicina(Nombre,Tipo_Medicina) values (MN,MTM);
+end $$
+delimiter ;
+call Ingresar_Medicina("VitanF","1");
+call Ingresar_Medicina("Calmax","2");
+call Ingresar_Medicina("Vitolix","3");
+call Ingresar_Medicina("Anesti","4");
+call Ingresar_Medicina("Lubri","5");
+-- 5) Tabla Tipo_Especialidad
+delimiter $$
+create procedure Ingresar_Tipo_Especialidad(in EN VARCHAR(50))
+begin 
+ insert into Tipo_Especialidad(Nombre) values (EN);
+end $$
+delimiter ;
+call Ingresar_Tipo_Especialidad("Odontología General");
+call Ingresar_Tipo_Especialidad("Profilaxis");
+call Ingresar_Tipo_Especialidad("Ortodoncia");
+-- 6) Tabla Doctor
+delimiter $$
+create procedure Ingresar_Doctor(in MUNL VARCHAR(20),IN Nom varchar(20),in ape Varchar(20),IN TIPOE INT,IN FCH DATE)
+begin 
+ insert into Doctor(Num_Licencia,Nombre,Apellido,Codigo_Tipo_Especialidad,Fecha) values (MUNL,Nom,ape,TIPOE,FCH);
+end $$
+delimiter ;
+call Ingresar_Doctor("001","Juan","Linares","1","1995-1-1");
+call Ingresar_Doctor("002","Emilio","Rivas","2","1995-8-17");
+call Ingresar_Doctor("003","Mario","Loarca","3","1995-12-15");
+call Ingresar_Doctor("004","Jimeno","Morataya","1","1995-12-11");
+call Ingresar_Doctor("005","Monico","Ares","2","1995-11-7");
+-- 7) Tabla Receta
+delimiter $$
+create procedure Ingresar_Receta(in CO INT,IN CM INT,IN CD INT,IN CANT INT,IN DCIS VARCHAR(50),IN FCH DATE)
+begin 
+ insert into Receta(Codigo_Paciente,Codigo_Medicina,Codigo_Doctor,Cantidad,Docis,Fecha) values (CO,CM,CD,CANT,DCIS,FCH);
+end $$
+delimiter ;
+call Ingresar_Receta("1","1","1","10","UNA TABLETA CADA DIA ANTES DE DESAYUNAR","2004-8-7");
+call Ingresar_Receta("2","2","2","1","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-9-8");
+call Ingresar_Receta("3","3","3","10","UNA TABLETA CADA DIA ANTES DE DESAYUNAR","2004-10-11");
+call Ingresar_Receta("4","4","4","10","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-11-12");
+call Ingresar_Receta("5","5","5","10","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-12-5");
+-- 8) Tabla Cita
+delimiter $$
+create procedure Ingresar_Cita(in FCH DATE,IN CD INT)
+begin 
+ insert into Cita(Fecha,Codigo_Doctor) values (FCH,CD);
+end $$
+delimiter ;
+call Ingresar_Cita("2004-12-12","1");
+call Ingresar_Cita("2004-12-11","2");
+call Ingresar_Cita("2004-12-10","3");
+call Ingresar_Cita("2004-12-9","4");
+call Ingresar_Cita("2004-12-8","5");
+-- 9) Tabla Registro
+delimiter $$
+create procedure Ingresar_Registro(in CP INT,IN CC INT)
+begin 
+ insert into Registro(Codigo_Paciente,Codigo_Cita) values (CP,CC);
+end $$
+delimiter ;
+call Ingresar_Registro("1","1");
+call Ingresar_Registro("2","2");
+call Ingresar_Registro("3","3");
+call Ingresar_Registro("4","4");
+call Ingresar_Registro("5","5");
+-- 10) Tabla Tratamiento
+delimiter $$
+create procedure Ingresar_Tratamiento(in N VARCHAR(20))
+begin 
+ insert into Tratamiento(Nombre) values (N);
+end $$
+delimiter ;
+call Ingresar_Tratamiento("Blanqueamiento");
+call Ingresar_Tratamiento("Implantes");
+call Ingresar_Tratamiento("limpieza dental");
+-- 11) Tabla Visitas
+delimiter $$
+create procedure Ingresar_Visitas(in CP INT,IN CON VARCHAR(50),IN H TIME)
+begin 
+ insert into Visitas(Codigo_Paciente,Condicion,Hora) values (CP,CON,H);
+end $$
+delimiter ;
+call Ingresar_Visitas("1","Grave","12:12:12");
+call Ingresar_Visitas("2","Leve","11:11:11");
+call Ingresar_Visitas("3","Grave","10:10:10");
+call Ingresar_Visitas("4","Leve","9:9:9");
+call Ingresar_Visitas("5","Grave","8:8:8");
+-- 12) Tabla Bitacora
+delimiter $$
+create procedure Ingresar_Bitacora(in CV INT,IN CR INT)
+begin 
+ insert into Bitacora(Codigo_Visitas,Codigo_Receta) values (CV,CR);
+end $$
+delimiter ;
+call Ingresar_Bitacora("1","1");
+call Ingresar_Bitacora("2","2");
+call Ingresar_Bitacora("3","3");
+call Ingresar_Bitacora("4","4");
+call Ingresar_Bitacora("5","5");
+#=======================================================================================================================================#
+-- ------------------------------------------PROCEDIMIENTOS DE MODIFICAR DATOS EN LAS TABLAS ----------------------------------------- --
+#=======================================================================================================================================#
+-- 1) Tabla Tipo_Genero
+delimiter $$
+create procedure Modificar_Genero(in GN VARCHAR(30),in GNP int)
+begin 
+ update Genero set Nombre=GN where Codigo_Tipo_Genero=GNP ;
+end $$
+delimiter ;
+call Modificar_Genero("M","1"); -- Modificacion al id_1
+call Modificar_Genero("Masculino","1");  -- Regresando los datos originales al id_1
+call Modificar_Genero("F","2"); -- Modificacion al id_2
+call Modificar_Genero("Femenino","2");  -- Regresando los datos originales al id_2
+-- 2) Tabla Paciente
+delimiter $$
+create procedure Modificar_Paciente(in PN VARCHAR(20),IN PA VARCHAR(20),IN PC VARCHAR(20),IN PFN DATE,IN PG INT,IN PAID INT)
+begin 
+ update Paciente set Nombre=PN,Apellido=PA,Correo=PC,Fecha_Nacimiento=PFN,Genero=PG where Codigo_Paciente=PAID ;
+end $$
+delimiter ;
+call Modificar_Paciente("C","S","CS@gmail.com","2002-12-28","1","1"); -- Modificacion al id_1
+call Modificar_Paciente("Carlos","Selman","CaSe@gmail.com","2002-12-28","1","1"); -- Regresando los datos originales al id_1
+call Modificar_Paciente("J","Z","JZ@gmail.com","2002-11-15","1","2"); -- Modificacion al id_2
+call Modificar_Paciente("Joaquin","Zaragoza","JoZa@gmail.com","2002-11-15","1","2"); -- Regresando los datos originales al id_2
+call Modificar_Paciente("MIO","RO","MIORO@gmail.com","2002-10-2","1","3"); -- Modificacion al id_3
+call Modificar_Paciente("Mario","Rosales","MaRo@gmail.com","2002-10-2","1","3"); -- Regresando los datos originales al id_3
+call Modificar_Paciente("Mia","Qui","MiaQui@gmail.com","2001-5-2","2","4"); -- Modificacion al id_4
+call Modificar_Paciente("Maria","Quijano","MaQu@gmail.com","2001-5-2","2","4"); -- Regresando los datos originales al id_4
+call Modificar_Paciente("Pa","Jo","PaJo@gmail.com","2001-8-3","2","5"); -- Modificacion al id_5
+call Modificar_Paciente("Paola","Jordan","PaJo@gmail.com","2001-8-3","2","5"); -- Regresando los datos originales al id_5
+-- 3) Tabla Tipo_Medicina
+delimiter $$
+create procedure Modificar_Tipo_Medicina(in TMN VARCHAR(20),IN TMD VARCHAR(30),IN TDAID INT)
+begin 
+ update Tipo_Medicina set Nombre=TMN,Descripcion=TMD where Codigo_Tipo_Medicina=TDAID ;
+end $$
+delimiter ;
+call Modificar_Tipo_Medicina("V","T","1"); -- Modificacion al id_1
+call Modificar_Tipo_Medicina("Vitaflenaco","Tabletas","1"); -- Regresando los datos originales al id_1
+call Modificar_Tipo_Medicina("C","J","2"); -- Modificacion al id_2
+call Modificar_Tipo_Medicina("Calmante","Jarabe","2"); -- Regresando los datos originales al id_2
+call Modificar_Tipo_Medicina("VITA","T","3"); -- Modificacion al id_3
+call Modificar_Tipo_Medicina("Vitamina","Tabletas","3"); -- Regresando los datos originales al id_3
+call Modificar_Tipo_Medicina("ANE","L","4"); -- Modificacion al id_4
+call Modificar_Tipo_Medicina("Anestecia","Liquido","4"); -- Regresando los datos originales al id_4
+call Modificar_Tipo_Medicina("LU","L1","5"); -- Modificacion al id_5
+call Modificar_Tipo_Medicina("Lubricante","Liquido","5"); -- Regresando los datos originales al id_5
+-- 4) Tabla Medicina
+delimiter $$
+create procedure Modificar_Medicina(in MN VARCHAR(20),IN MTM INT,in id_123 int)
+begin 
+ update Medicina set Nombre=MN,Tipo_Medicina=MTM where Codigo_Medicina=id_123 ;
+end $$
+delimiter ;
+call Modificar_Medicina("VF","1","1"); -- Modificacion al id_1
+call Modificar_Medicina("VitanF","1","1"); -- Regresando los datos originales al id_1
+call Modificar_Medicina("CX","2","2"); -- Modificacion al id_2
+call Modificar_Medicina("Calmax","2","2"); -- Regresando los datos originales al id_2
+call Modificar_Medicina("VIX","3","3"); -- Modificacion al id_3
+call Modificar_Medicina("Vitolix","3","3"); -- Regresando los datos originales al id_3
+call Modificar_Medicina("ASTUI","4","4"); -- Modificacion al id_4
+call Modificar_Medicina("Anesti","4","4"); -- Regresando los datos originales al id_4
+call Modificar_Medicina("LBRI","5","5"); -- Modificacion al id_5
+call Modificar_Medicina("Lubri","5","5"); -- Regresando los datos originales al id_5
+-- 5) Tabla Tipo_Especialidad
+delimiter $$
+create procedure Modificar_Tipo_Especialidad(in EN VARCHAR(50),in id_123 int)
+begin 
+ update Tipo_Especialidad set Nombre=EN where Codigo_Tipo_Especialidad=id_123 ;
+end $$
+delimiter ;
+call Modificar_Tipo_Especialidad("OG","1"); -- Modificacion al id_1
+call Modificar_Tipo_Especialidad("Odontología General","1"); -- Regresando los datos originales al id_1
+call Modificar_Tipo_Especialidad("PXIS","2"); -- Modificacion al id_2
+call Modificar_Tipo_Especialidad("Profilaxis","2"); -- Regresando los datos originales al id_2
+call Modificar_Tipo_Especialidad("ONCIA","3"); -- Modificacion al id_3
+call Modificar_Tipo_Especialidad("Ortodoncia","3"); -- Regresando los datos originales al id_3
+-- 6) Tabla Doctor
+delimiter $$
+create procedure Modificar_Doctor(in MUNL VARCHAR(20),IN Nom varchar(20),in ape Varchar(20),IN TIPOE INT,IN FCH DATE,in id_123 int)
+begin 
+update Doctor set Num_Licencia=MUNL,Nombre=Nom,Apellido=ape,Codigo_Tipo_Especialidad=TIPOE,Fecha=FCH where Codigo_Doctor=id_123;
+end $$
+delimiter ;
+call Modificar_Doctor("001","J","L","1","1995-1-1","1");-- Modificacion al id_1
+call Modificar_Doctor("001","Juan","Linares","1","1995-1-1","1"); -- Regresando los datos originales al id_1
+call Modificar_Doctor("002","E","R","2","1995-8-17","2");-- Modificacion al id_2
+call Modificar_Doctor("002","Emilio","Rivas","2","1995-8-17","2"); -- Regresando los datos originales al id_2
+call Modificar_Doctor("003","M","L","3","1995-12-15","3");-- Modificacion al id_3
+call Modificar_Doctor("003","Mario","Loarca","3","1995-12-15","3"); -- Regresando los datos originales al id_3
+call Modificar_Doctor("004","J","M","1","1995-12-11","4");-- Modificacion al id_4
+call Modificar_Doctor("004","Jimeno","Morataya","1","1995-12-11","4");-- Regresando los datos originales al id_4
+call Modificar_Doctor("005","M","A","2","1995-11-7","5");-- Modificacion al id_5
+call Modificar_Doctor("005","Monico","Ares","2","1995-11-7","5"); -- Regresando los datos originales al id_5
+-- 7) Tabla Receta
+delimiter $$
+create procedure Modificar_Receta(in CO INT,IN CM INT,IN CD INT,IN CANT INT,IN DCIS VARCHAR(50),IN FCH DATE,in id123 int)
+begin 
+update Receta set Codigo_Paciente=CO,Codigo_Medicina=CM,Codigo_Doctor=CD,Cantidad=CANT,Docis=DCIS,Fecha=FCH where Codigo_Receta=id123;
+end $$
+delimiter ;
+call Modificar_Receta("1","1","1","10","U_T_C/D_A_D_DYR","2004-8-7","1");-- Modificacion al id_1
+call Modificar_Receta("1","1","1","10","UNA TABLETA CADA DIA ANTES DE DESAYUNAR","2004-8-7","1");-- Regresando los datos originales al id_1
+call Modificar_Receta("2","2","2","1","U_C_C/D_A_D_DYR","2004-9-8","2");-- Modificacion al id_2
+call Modificar_Receta("2","2","2","1","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-9-8","2");-- Regresando los datos originales al id_2
+call Modificar_Receta("3","3","3","10","U_T_C/D_A_D_DYR","2004-10-11","3");-- Modificacion al id_3
+call Modificar_Receta("3","3","3","10","UNA TABLETA CADA DIA ANTES DE DESAYUNAR","2004-10-11","3");-- Regresando los datos originales al id_3
+call Modificar_Receta("3","3","3","10","U_C_C/D_A_D_DYR","2004-10-11","4");-- Modificacion al id_4
+call Modificar_Receta("4","4","4","10","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-11-12","4");-- Regresando los datos originales al id_4
+call Modificar_Receta("5","5","5","10","U_C_C/D_A_D_DYR","2004-12-5","5");-- Modificacion al id_5
+call Modificar_Receta("5","5","5","10","UNA CUCHARADITA CADA DIA ANTES DE DESAYUNAR","2004-12-5","5");-- Regresando los datos originales al id_5
+-- 8) Tabla Cita
+delimiter $$
+create procedure Modificar_Cita(in FCH DATE,IN CD INT,in id321 int)
+begin 
+ update Cita set Fecha=FCH,Codigo_Doctor=CD where Codigo_Cita=id321;
+end $$
+delimiter ;
+call Modificar_Cita("2002-12-12","1","1");-- Modificacion al id_1
+call Modificar_Cita("2004-12-12","1","1"); -- Regresando los datos originales al id_1
+call Modificar_Cita("2002-12-11","2","2");-- Modificacion al id_2
+call Modificar_Cita("2004-12-11","2","2"); -- Regresando los datos originales al id_2
+call Modificar_Cita("2002-12-10","3","3");-- Modificacion al id_3
+call Modificar_Cita("2004-12-10","3","3"); -- Regresando los datos originales al id_3
+call Modificar_Cita("2002-12-9","4","4");-- Modificacion al id_4
+call Modificar_Cita("2004-12-9","4","4");  -- Regresando los datos originales al id_4
+call Modificar_Cita("2002-12-8","5","5");-- Modificacion al id_5
+call Modificar_Cita("2004-12-8","5","5");  -- Regresando los datos originales al id_5
+-- 9) Tabla Registro
+delimiter $$
+create procedure Modificar_Registro(in CP INT,IN CC INT,in id543 int)
+begin 
+ update Registro set Codigo_Paciente=CP,Codigo_Cita=CC where Codigo_Registro=id543;
+end $$
+delimiter ;
+call Modificar_Registro("1","2","3"); -- Modificacion al id_1
+call Modificar_Registro("1","1","1"); -- Regresando los datos originales al id_1
+call Modificar_Registro("2","3","1");-- Modificacion al id_2
+call Modificar_Registro("2","2","2"); -- Regresando los datos originales al id_2
+call Modificar_Registro("3","1","1");-- Modificacion al id_3
+call Modificar_Registro("3","3","3"); -- Regresando los datos originales al id_3
+call Modificar_Registro("4","2","2");-- Modificacion al id_4
+call Modificar_Registro("4","4","4"); -- Regresando los datos originales al id_4
+call Modificar_Registro("5","1","3");-- Modificacion al id_5
+call Modificar_Registro("5","5","5"); -- Regresando los datos originales al id_5
+-- 10) Tabla Tratamiento
+delimiter $$
+create procedure Modificar_Tratamiento(in N VARCHAR(20),IN ID123 INT)
+begin 
+ update Tratamiento set Nombre=N where Codigo_Tratamiento=ID123;
+end $$
+delimiter ;
+call Modificar_Tratamiento("B","1");-- Modificacion al id_1
+call Modificar_Tratamiento("Blanqueamiento","1"); -- Regresando los datos originales al id_1
+call Modificar_Tratamiento("I","2"); -- Modificacion al id_2
+call Modificar_Tratamiento("Implantes","2"); -- Regresando los datos originales al id_2
+call Modificar_Tratamiento("L D","3");-- Modificacion al id_3
+call Modificar_Tratamiento("Limpieza Dental","3"); -- Regresando los datos originales al id_3
+-- 11) Tabla Visitas
+delimiter $$
+create procedure Modificar_Visitas(in CP INT,IN CON VARCHAR(50),IN H TIME,in id1235434 int)
+begin 
+update Visitas set Codigo_Paciente=CP,Condicion=CON,Hora=H WHERE Codigo_Visitas=id1235434;
+end $$
+delimiter ;
+call Modificar_Visitas("1","G","12:12:12","1"); -- Modificacion al id_1
+call Modificar_Visitas("1","Grave","12:12:12","1"); -- Regresando los datos originales al id_1
+call Modificar_Visitas("2","L","11:11:11","2");-- Modificacion al id_2
+call Modificar_Visitas("2","Leve","11:11:11","2"); -- Regresando los datos originales al id_2
+call Modificar_Visitas("3","G","10:10:10","3");-- Modificacion al id_3
+call Modificar_Visitas("3","Grave","10:10:10","3"); -- Regresando los datos originales al id_3
+call Modificar_Visitas("4","L","9:9:9","4");-- Modificacion al id_4
+call Modificar_Visitas("4","Leve","9:9:9","4"); -- Regresando los datos originales al id_4
+call Modificar_Visitas("5","G","8:8:8","5");-- Modificacion al id_5
+call Modificar_Visitas("5","Grave","8:8:8","5"); -- Regresando los datos originales al id_5
+-- 12) Tabla Bitacora
+delimiter $$
+create procedure Modificar_Bitacora(in CV INT,IN CR INT,in id345 int)
+begin 
+update Bitacora set Codigo_Visitas=CV,Codigo_Receta=CR WHERE Codigo_Bitacora=id345;
+end $$
+delimiter ;
+call Modificar_Bitacora("1","1","1");
+call Modificar_Bitacora("2","2","2");
+call Modificar_Bitacora("3","3","3");
+call Modificar_Bitacora("4","4","4");
+call Modificar_Bitacora("5","5","5");
+#=======================================================================================================================================#
+-- ------------------------------------------PROCEDIMIENTOS DE ELIMINAR DATOS EN LAS TABLAS ----------------------------------------- --
+#=======================================================================================================================================#
+-- 1) Tabla Bitacora
+Delimiter $$
+create procedure Eliminar_Bitacora(in B1 INT)
+Begin 
+    delete From Bitacora where Codigo_Bitacora=B1 ;
+end $$
+Delimiter ;
+-- 2) Tabla Visitas
+Delimiter $$
+create procedure Eliminar_Visitas(in V1 INT)
+Begin 
+    delete From Bitacora where Codigo_Visitas=V1 ;
+    delete from Visitas where Codigo_Visitas=V1 ;
+end $$
+Delimiter ;
+-- 3) Tabla Tratamiento
+Delimiter $$
+create procedure Eliminar_Tratamiento(in T1 INT)
+Begin 
+    delete from Tratamiento where Codigo_Tratamiento=T1 ;
+end $$
+Delimiter ;
+-- 4) Tabla Registro
+Delimiter $$
+create procedure Eliminar_Registro(in R1 INT)
+Begin 
+    delete from Registro where Codigo_Registro=R1 ;
+end $$
+Delimiter ;
+-- 5) Tabla Cita
+Delimiter $$
+create procedure Eliminar_Cita(in C1 INT)
+Begin 
+    delete from Registro where Codigo_Cita=C1 ;
+    delete from Cita where Codigo_Cita=C1 ;
+end $$
+Delimiter ;
+-- 6) Tabla Receta
+Delimiter $$
+create procedure Eliminar_Receta(in R1 INT)
+Begin 
+    delete from Receta where Codigo_Receta=R1 ;
+end $$
+Delimiter ;
+-- 7) Tabla Doctor
+Delimiter $$
+create procedure Eliminar_Doctor(in D1 INT)
+Begin 
+    delete from Cita where Codigo_Doctor=D1 ;
+    delete from Receta where Codigo_Doctor=D1 ;
+	delete from Doctor where Codigo_Doctor=D1 ;
+end $$
+Delimiter ;
+-- 8) Tabla Tipo_Especialidad
+Delimiter $$
+create procedure Eliminar_Tipo_Especialidad(in E1 INT)
+Begin 
+     delete from Doctor where Codigo_Tipo_Especialidad=E1 ;
+     delete from Tipo_Especialidad where Codigo_Tipo_Especialidad=E1 ;
+end $$
+Delimiter ;
+-- 9) Tabla Medicina
+Delimiter $$
+create procedure Eliminar_Medicina(in M1 INT)
+Begin 
+     delete from Receta where Codigo_Medicina=M1 ;
+     delete from Medicina where Codigo_Medicina=M1 ;
+end $$
+Delimiter ;
+-- 10) Tabla Tipo_Medicina
+Delimiter $$
+create procedure Eliminar_Tipo_Medicina(in E1 INT)
+Begin 
+     delete from Medicina where Codigo_Tipo_Medicina=E1 ;
+     delete from Codigo_Tipo_Medicina where Codigo_Tipo_Medicina=E1 ;
+end $$
+Delimiter ;
+-- 11) Tabla Paciente
+Delimiter $$
+create procedure Eliminar_Paciente(in E1 INT)
+Begin 
+     delete from Registro where Codigo_Paciente=E1 ;
+     delete from Receta where Codigo_Paciente=E1 ;
+     delete from Visitas where Codigo_Paciente=E1 ;
+     delete from Paciente where Codigo_Paciente=E1 ;
+end $$
+Delimiter ;
+-- 12) Tabla Tipo_Genero
+Delimiter $$
+create procedure Eliminar_Tipo_Genero(in E1 INT)
+Begin 
+     delete from Paciente where Genero=E1 ;
+     delete from Genero where Codigo_Tipo_Genero=E1 ;
+end $$
+Delimiter ;
+call Eliminar_Bitacora ("1");
+call Eliminar_Visitas ("1");
+call Eliminar_Tratamiento ("1");
+call Eliminar_Registro ("1");
+call Eliminar_Cita ("1");
+call Eliminar_Receta ("1");
+call Eliminar_Doctor ("1");
+call Eliminar_Medicina ("1");
+call Eliminar_Paciente ("1");
+#=======================================================================================================================================#
+-- ------------------------------------------PROCEDIMIENTOS DE CONSULTAS DE TABLAS POR CODIGO ---------------------------------------- --
+#=======================================================================================================================================#
+-- 1) Tabla Tipo_Genero
+delimiter $$
+	create procedure Condulta_Tipo_Genero(in Codigo_T_G_N_Nuevo int)
+    begin
+		select * from Genero where Codigo_Tipo_Genero=Codigo_T_G_N_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Tipo_Genero(1);
+call Condulta_Tipo_Genero(2);
+-- 2) Tabla Paciente
+delimiter $$
+	create procedure Condulta_Paciente(in Codigo_P_Nuevo int)
+    begin
+		select * from Paciente where Codigo_Paciente=Codigo_P_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Paciente(1);
+call Condulta_Paciente(2);
+call Condulta_Paciente(3);
+call Condulta_Paciente(4);
+call Condulta_Paciente(5);
+-- 3) Tabla Tipo_Medicina
+delimiter $$
+	create procedure Condulta_Tipo_Medicina(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Tipo_Medicina where Codigo_Tipo_Medicina=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Tipo_Medicina("1");
+call Condulta_Tipo_Medicina("2");
+call Condulta_Tipo_Medicina("3");
+call Condulta_Tipo_Medicina("4");
+call Condulta_Tipo_Medicina("5");
+-- 4) Tabla Medicina
+delimiter $$
+	create procedure Condulta_Medicina(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Medicina where Codigo_Medicina=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Medicina("1");
+call Condulta_Medicina("2");
+call Condulta_Medicina("3");
+call Condulta_Medicina("4");
+call Condulta_Medicina("5");
+-- 5) Tabla Tipo_Especialidad
+delimiter $$
+	create procedure Condulta_Tipo_Especialidad(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Tipo_Especialidad where Codigo_Tipo_Especialidad=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Tipo_Especialidad("1");
+call Condulta_Tipo_Especialidad("2");
+call Condulta_Tipo_Especialidad("3");
+-- 6) Tabla Doctor
+delimiter $$
+	create procedure Condulta_Doctor(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Doctor where Codigo_Doctor=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Doctor("1");
+call Condulta_Doctor("2");
+call Condulta_Doctor("3");
+call Condulta_Doctor("4");
+call Condulta_Doctor("5");
+-- 7) Tabla Receta
+delimiter $$
+	create procedure Condulta_Receta(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Receta where Codigo_Receta=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Receta("1");
+call Condulta_Receta("2");
+call Condulta_Receta("3");
+call Condulta_Receta("4");
+call Condulta_Receta("5");
+-- 8) Tabla Cita
+delimiter $$
+	create procedure Condulta_Cita(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Cita where Codigo_Cita=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Cita("1");
+call Condulta_Cita("2");
+call Condulta_Cita("3");
+call Condulta_Cita("4");
+call Condulta_Cita("5");
+-- 9) Tabla Registro
+delimiter $$
+	create procedure Condulta_Registro(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Registro where Codigo_Registro=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Registro("1");
+call Condulta_Registro("2");
+call Condulta_Registro("3");
+call Condulta_Registro("4");
+call Condulta_Registro("5");
+-- 10) Tabla Tratamiento
+delimiter $$
+	create procedure Condulta_Tratamiento(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Tratamiento where Codigo_Tratamiento=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Tratamiento("1");
+call Condulta_Tratamiento("2");
+call Condulta_Tratamiento("3");
+-- 11) Tabla Visitas
+delimiter $$
+	create procedure Condulta_Visitas(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Visitas where Codigo_Visitas=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Visitas("1");
+call Condulta_Visitas("2");
+call Condulta_Visitas("3");
+call Condulta_Visitas("4");
+call Condulta_Visitas("5");
+-- 12) Tabla Bitacora
+delimiter $$
+	create procedure Condulta_Bitacora(in Codigo_T_M_Nuevo int)
+    begin
+		select * from Bitacora where Codigo_Bitacora=Codigo_T_M_Nuevo;
+    end $$
+delimiter ;
+call Condulta_Bitacora("1");
+call Condulta_Bitacora("2");
+call Condulta_Bitacora("3");
+call Condulta_Bitacora("4");
+call Condulta_Bitacora("5");
+-- Cantidad_de_citas_futuras_atendidas_por_un_doctor
+delimiter $$
+create procedure Cantidad_de_citas_futuras_atendidas_por_un_doctor()
+begin
+select D.Nombre as "Doctor",count(C.Fecha) as "Cantidad_citas_futuras" 
+From Doctor D, Cita C where C.Codigo_Doctor=D.Codigo_Doctor
+and C.Fecha>"2000-01-01";
+end $$
+delimiter ;
+call Cantidad_de_citas_futuras_atendidas_por_un_doctor();
+-- Mes_Con_Mayor_Citas
+delimiter $$
+create procedure Mes_Con_Mayor_Citas()
+begin 
+select max(k.mayor) AS Mes_Con_Mas_Citas from(
+select count(month(Fecha)), monthname(Fecha) as Mayor
+from Cita where Year (Fecha)="2004" group by month (Fecha))k;
+end $$
+delimiter ;
+call Mes_Con_Mayor_Citas ();
+
+-- Promedio de citas programadas en un mes, para un doctor x
+/* delimiter $$
+create procedure Promedio_de_citas_programadas_en_un_mes_para_un_doctor()
+begin 
+select avg(month(Fecha)), monthname(Fecha) as Mayor
+from Cita where Year (Fecha)="2004" group by month (Fecha) and Cita.Codigo_Doctor=Doctor.Codigo_Doctor and
+Cita.Codigo_Doctor="1";
+end $$
+delimiter ;
+call Promedio_de_citas_programadas_en_un_mes_para_un_doctor(); */
+
+-- Cual es la persona con mayor cantidad de citas programadas.
+/* delimiter $$
+create procedure Cual_es_la_persona_con_mayor_cantidad_de_citas_programadas()
+begin 
+select max(k.mayor) AS Cual_es_la_persona_con_mayor_cantidad_de_citas_programadas from(
+select count(month(Fecha)), monthname(Fecha) as Mayor
+from Cita where Year (Fecha)="2004" group by month (Fecha))k;
+end $$
+delimiter ;
+call Cual_es_la_persona_con_mayor_cantidad_de_citas_programadas (); */
+-- Cuales son los 3 principales tratamientos atendidos en un mes determinado.
